@@ -16,7 +16,8 @@ function runDataCovid() {
         await page.goto('https://ncov.moh.gov.vn/'); // Go to Page
 
         firebase.covidVNDelete();
-        for (let index = 1; index < 5; index++) {
+        const option = 96;
+        for (let index = 1; index <= option; index++) {
             index = index < 10 ? '0' + index : index;
             await page.select('#_congbothongke_WAR_coronadvcportlet_vietNam', index);
             await page.waitFor(500);
