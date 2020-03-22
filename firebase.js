@@ -18,7 +18,7 @@ covidGet = (database) => {
     return covidFirebase.once('value').then(snapshot => {
         let covidSnap = snapshot.val();
         let covidData = [];
-        for (const key in covidVNSnap) {
+        for (const key in covidSnap) {
             if (covidSnap.hasOwnProperty(key)) {
                 covidData.push(covidSnap[key]);
             }
