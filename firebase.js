@@ -1,46 +1,48 @@
 let firebase = require('firebase');
 
 var firebaseConfig = {
-    apiKey: "AIzaSyCdouF_BqwdzOVO_KzNRRC0DoAolf2gWw0",
-    authDomain: "ncov-2019-vn.firebaseapp.com",
-    databaseURL: "https://ncov-2019-vn.firebaseio.com",
-    projectId: "ncov-2019-vn",
-    storageBucket: "ncov-2019-vn.appspot.com",
-    messagingSenderId: "934349906713",
-    appId: "1:934349906713:web:30a5524d508d0dee105b88"
+    apiKey: process.env.firebase_apiKey,
+    authDomain: process.env.firebase_authDomain,
+    databaseURL: process.env.firebase_databaseURL,
+    projectId: process.env.firebase_projectId,
+    storageBucket: process.env.firebase_storageBucket,
+    messagingSenderId: process.env.firebase_messagingSenderId,
+    appId: process.env.firebase_appId
 };
 
 let firebaseConnect = firebase.initializeApp(firebaseConfig);
 
 /* Covid VN */
-var covidVNFirebase = firebase.database().ref('VIETNAM');
-covidVNGet = () => {
-    return covidVNFirebase.once('value').then(snapshot => {
-        let covidVNSnap = snapshot.val();
+covidGet = (database) => {
+    var covidFirebase = firebase.database().ref(database);
+    return covidFirebase.once('value').then(snapshot => {
+        let covidSnap = snapshot.val();
         let covidData = [];
         for (const key in covidVNSnap) {
-            if (covidVNSnap.hasOwnProperty(key)) {
-                covidData.push(covidVNSnap[key]);
+            if (covidSnap.hasOwnProperty(key)) {
+                covidData.push(covidSnap[key]);
             }
         }
         return covidData;
     });
 }
 
-covidVNDelete = () => {
-    covidVNFirebase.once('value').then(snapshot => {
-        let covidVNSnap = snapshot.val();
-        for (const key in covidVNSnap) {
-            if (covidVNSnap.hasOwnProperty(key)) {
-                covidVNFirebase.child(key).remove();
+covidDelete = (database) => {
+    var covidFirebase = firebase.database().ref(database);
+    covidFirebase.once('value').then(snapshot => {
+        let covidSnap = snapshot.val();
+        for (const key in covidSnap) {
+            if (covidSnap.hasOwnProperty(key)) {
+                covidFirebase.child(key).remove();
             }
         }
     });
 }
 
-covidVNUpdate = (data) => {
-    covidVNFirebase.push(data);
+covidUpdate = (data, database) => {
+    var covidFirebase = firebase.database().ref(database);
+    covidFirebase.push(data);
 }
 
 // Initialize Firebase
-module.exports = { firebaseConnect, covidVNGet, covidVNUpdate, covidVNDelete };
+module.exports = { firebaseConnect, covidGet, covidUpdate, covidDelete };

@@ -1,3 +1,4 @@
+require('dotenv').config();
 var { firebaseConnect } = require('./firebase');
 var createError = require('http-errors');
 var express = require('express');
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get("/", function (req, res) { res.redirect('/api') })
 app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler

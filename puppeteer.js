@@ -15,9 +15,7 @@ function runDataCovid() {
         const page = await browser.newPage();
         await page.goto('https://ncov.moh.gov.vn/'); // Go to Page
 
-        firebase.covidVNDelete();
-        const option = 10;
-        const getOption = await page.evaluate(() => {
+        const option = await page.evaluate(() => {
             let optionVN = document.querySelectorAll("#_congbothongke_WAR_coronadvcportlet_vietNam option");
             let optionWD = document.querySelectorAll("#_congbothongke_WAR_coronadvcportlet_theGioi option");
             let optionVietNam = []; optionWorld = [];
@@ -27,30 +25,45 @@ function runDataCovid() {
             for (const optionWDChild of optionWD) {
                 optionWorld.push(optionWDChild.value)
             }
-            return {optionVietNam, optionWorld};
+            return { optionVietNam, optionWorld };
         })
-        // for (let index = 1; index <= option; index++) {
-        //     index = index < 10 ? '0' + index : `${index}`;
-        //     await page.select('#_congbothongke_WAR_coronadvcportlet_vietNam', index);
-        //     await page.waitFor(500);
-        //     const covidData = await page.evaluate((index) => {
-        //         let name = document.querySelector(`#_congbothongke_WAR_coronadvcportlet_vietNam option[value='${index}'`);
-        //         if (name !== null) {
-        //             nameValue = name.innerText;
-        //             let infections = document.getElementById('VN-01').innerText;
-        //             let dead = document.getElementById('VN-02').innerText;
-        //             let suspected = document.getElementById('VN-03').innerText;
-        //             let recover = document.getElementById('VN-04').innerText;
-        //             let covidData = { name: nameValue, infections, dead, suspected, recover }
-        //             return covidData;
-        //         }
-        //     }, index);
-        //     firebase.covidVNUpdate(covidData);
-        // }
-        const covidData = await page.evaluate(() => {
-            document.getElementById("_congbothongke_WAR_coronadvcportlet_vietNam").value = "01";
-        })
-        // await browser.close();
+
+        let { optionVietNam, optionWorld } = option;
+        firebase.covidDelete("VIETNAM");
+        firebase.covidDelete("WORLD");
+        for (let index = 0; index < optionVietNam.length; index++) {
+            await page.select('#_congbothongke_WAR_coronadvcportlet_vietNam', optionVietNam[index]);
+            await page.waitFor(500);
+            const covidData = await page.evaluate((index) => {
+                let name = document.querySelector(`#_congbothongke_WAR_coronadvcportlet_vietNam option[value='${index}'`);
+                nameValue = name.innerText;
+                let infections = document.getElementById('VN-01').innerText;
+                let dead = document.getElementById('VN-02').innerText;
+                let suspected = document.getElementById('VN-03').innerText;
+                let recover = document.getElementById('VN-04').innerText;
+                let covidData = { name: nameValue, infections, dead, suspected, recover }
+                return covidData;
+            }, optionVietNam[index]);
+            firebase.covidUpdate(covidData, "VIETNAM");
+        }
+
+        for (let index = 0; index < optionWorld.length; index++) {
+            await page.select('#_congbothongke_WAR_coronadvcportlet_theGioi', optionWorld[index]);
+            await page.waitFor(500);
+            const covidData = await page.evaluate((index) => {
+                let name = document.querySelector(`#_congbothongke_WAR_coronadvcportlet_theGioi option[value='${index}'`);
+                nameValue = name.innerText;
+                let infections = document.getElementById('QT-01').innerText;
+                let dead = document.getElementById('QT-02').innerText;
+                let suspected = document.getElementById('QT-03').innerText;
+                let recover = document.getElementById('QT-04').innerText;
+                let covidData = { name: nameValue, infections, dead, suspected, recover }
+                return covidData;
+            }, optionWorld[index]);
+            firebase.covidUpdate(covidData, "WORLD");
+        }
+
+        await browser.close();
     })();
 }
 
