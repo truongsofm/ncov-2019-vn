@@ -18,7 +18,7 @@ function runDataCovid() {
         firebase.covidVNDelete();
         const option = 96;
         for (let index = 1; index <= option; index++) {
-            index = index < 10 ? '0' + index : index;
+            index = index < 10 ? '0' + index : `${index}`;
             await page.select('#_congbothongke_WAR_coronadvcportlet_vietNam', index);
             await page.waitFor(500);
             const covidData = await page.evaluate((index) => {
@@ -35,6 +35,7 @@ function runDataCovid() {
             }, index);
             firebase.covidVNUpdate(covidData);
         }
+        await browser.close();
     })();
 }
 
