@@ -20,6 +20,5 @@ router.get("/world", function (req, res) {
 })
 
 puppeteer.runDataCovid();
-setInterval(puppeteer.runDataCovid, 1800000);
 
 module.exports = router;

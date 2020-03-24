@@ -5,7 +5,6 @@ function runDataCovid() {
     (async () => {
 
         const browser = await puppeteer.launch({
-            headless: false,
             ignoreDefaultArgs: ['--disable-extensions'],
             args: [
                 '--no-sandbox',
@@ -66,6 +65,7 @@ function runDataCovid() {
         } catch (err) {
             let d = new Date(Date.now());
             console.log(`${d}: Chưa thể tải trang...`);
+            await browser.close();
         }
 
         await browser.close();
