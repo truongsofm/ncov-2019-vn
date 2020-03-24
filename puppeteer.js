@@ -30,10 +30,9 @@ function runDataCovid() {
 
         let { optionVietNam, optionWorld } = option;
         firebase.covidDelete("VIETNAM");
-        firebase.covidDelete("WORLD");
         for (let index = 0; index < optionVietNam.length; index++) {
             await page.select('#_congbothongke_WAR_coronadvcportlet_vietNam', optionVietNam[index]);
-            await page.waitFor(500);
+            await page.waitFor(1000);
             const covidData = await page.evaluate((index) => {
                 let name = document.querySelector(`#_congbothongke_WAR_coronadvcportlet_vietNam option[value='${index}'`);
                 nameValue = name.innerText;
@@ -47,6 +46,7 @@ function runDataCovid() {
             firebase.covidUpdate(covidData, "VIETNAM");
         }
 
+        firebase.covidDelete("WORLD");
         for (let index = 0; index < optionWorld.length; index++) {
             await page.select('#_congbothongke_WAR_coronadvcportlet_theGioi', optionWorld[index]);
             await page.waitFor(500);

@@ -28,19 +28,12 @@ covidGet = (database) => {
 }
 
 covidDelete = (database) => {
-    var covidFirebase = firebase.database().ref(database);
-    covidFirebase.once('value').then(snapshot => {
-        let covidSnap = snapshot.val();
-        for (const key in covidSnap) {
-            if (covidSnap.hasOwnProperty(key)) {
-                covidFirebase.child(key).remove();
-            }
-        }
-    });
+    let covidFirebase = firebase.database().ref(database);
+    covidFirebase.remove();    
 }
 
 covidUpdate = (data, database) => {
-    var covidFirebase = firebase.database().ref(database);
+    let covidFirebase = firebase.database().ref(database);
     covidFirebase.push(data);
 }
 
